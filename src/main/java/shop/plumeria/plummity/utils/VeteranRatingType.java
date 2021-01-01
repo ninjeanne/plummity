@@ -1,4 +1,4 @@
-package shop.plumeria.plummity.dao;
+package shop.plumeria.plummity.utils;
 
 public enum VeteranRatingType {
     zero,

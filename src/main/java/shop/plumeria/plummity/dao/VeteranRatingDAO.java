@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import shop.plumeria.plummity.utils.VeteranRatingType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
