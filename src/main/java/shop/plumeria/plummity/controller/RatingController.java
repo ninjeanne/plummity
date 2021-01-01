@@ -8,7 +8,7 @@ import shop.plumeria.plummity.service.ImageService;
 import shop.plumeria.plummity.service.UserDataService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/rating")
 public class RatingController {
 
     @Autowired
@@ -30,5 +30,7 @@ public class RatingController {
     //TODO controller for ratings (preferable would be batches, check how flutter can send those)
     //TODO controller for latest images. See ImageService. Only the latest ones. Maybe a link would be enough as flutter can
     //TODO use network images to show thumbnails and not save images. Needs an active internet connection!
+
+    //TODO set up gitlab ci and the server
 
 }
