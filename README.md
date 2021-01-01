@@ -1,8 +1,8 @@
 # Plummity
 ...for collecting images and plummy points with the plumeria app
-##Run the backend
+## Run the backend
 
-####If you haven't installed maven you can use the included maven wrapper!
+#### If you haven't installed maven you can use the included maven wrapper!
 
 Build the complete project including backend and frontend
 ```
