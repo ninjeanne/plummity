@@ -14,8 +14,6 @@ import shop.plumeria.plummity.dto.VeteranRatingEntry;
 import shop.plumeria.plummity.service.ImageService;
 import shop.plumeria.plummity.service.UserDataService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -42,9 +40,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/{useridentifier}/standard/images")
-    public ResponseEntity<Slice<String>> getNewestStandardImageIds(
-            @PageableDefault(sort = {"created"}, direction = Sort.Direction.DESC)
-            Pageable pageable, @PathVariable("useridentifier") String useridentifier) {
+    public ResponseEntity<Slice<String>> getNewestStandardImageIds(@PageableDefault(sort = { "created" }, direction = Sort.Direction.DESC) Pageable pageable,
+            @PathVariable("useridentifier") String useridentifier) {
         Slice<String> imagesForUser = imageService.getLatestStandardImagesForUser(pageable, useridentifier);
         return ResponseEntity.ok().body(imagesForUser);
     }
