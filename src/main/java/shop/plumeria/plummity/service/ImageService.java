@@ -8,16 +8,17 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.plumeria.plummity.dao.ImageDAO;
 import shop.plumeria.plummity.dao.StandardRatingDAO;
 import shop.plumeria.plummity.dao.UserDAO;
-import shop.plumeria.plummity.dao.VeteranRatingDAO;
 import shop.plumeria.plummity.dto.ErrorDTO;
 import shop.plumeria.plummity.dto.VeteranRatingEntry;
 import shop.plumeria.plummity.repository.ImageRepository;
-import shop.plumeria.plummity.repository.UserRepository;
 import shop.plumeria.plummity.repository.VeteranRatingRepository;
 import shop.plumeria.plummity.utils.VeteranRatingType;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -81,9 +82,10 @@ public class ImageService {
         return new Date(System.currentTimeMillis() - (7 * DAY_IN_MS));
     }
 
-    public List<String> getLatestStandardImagesForUser(String useridentifier) {
+    public Slice<String> getLatestStandardImagesForUser(Pageable pageable, String useridentifier) {
+        pageable.getSortOr(Sort.by(Sort.Direction.ASC, "created"));
         UserDAO userFromDatabase = userDataService.getLatestUserDAO(useridentifier);
-        List<ImageDAO> images = imageRepository.getLatest(useridentifier, get10DaysAgo(), Sort.by(Sort.Direction.ASC, "created"));
+        Slice<ImageDAO> images = imageRepository.getLatest(useridentifier, get10DaysAgo(), pageable);
         List<String> correctImagesIDs = new ArrayList<>();
 
         for (ImageDAO image : images) {
@@ -98,7 +100,7 @@ public class ImageService {
                 correctImagesIDs.add(image.getUuid());
             }
         }
-        return correctImagesIDs;
+        return new SliceImpl<>(correctImagesIDs, pageable, images.hasNext());
     }
 
     public Slice<VeteranRatingEntry> getVeteranImagesForUser(Pageable pageable, String useridentifier) {

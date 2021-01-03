@@ -3,6 +3,8 @@ package shop.plumeria.plummity.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,8 +42,10 @@ public class UserController {
     }
 
     @GetMapping(value = "/{useridentifier}/standard/images")
-    public ResponseEntity<List<String>> getNewestStandardImageIds(@PathVariable("useridentifier") String useridentifier) {
-        List<String> imagesForUser = imageService.getLatestStandardImagesForUser(useridentifier);
+    public ResponseEntity<Slice<String>> getNewestStandardImageIds(
+            @PageableDefault(sort = {"created"}, direction = Sort.Direction.DESC)
+            Pageable pageable, @PathVariable("useridentifier") String useridentifier) {
+        Slice<String> imagesForUser = imageService.getLatestStandardImagesForUser(pageable, useridentifier);
         return ResponseEntity.ok().body(imagesForUser);
     }
 
