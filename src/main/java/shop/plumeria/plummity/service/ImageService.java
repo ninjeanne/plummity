@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,6 +91,10 @@ public class ImageService {
             }
         }
         return correctImagesIDs;
+    }
+
+    public Slice<String> getVeteranImagesForUser(Pageable pageable, String useridentifier) {
+        return imageRepository.getAllImagesForVeteran(pageable);//TODO user fehlt
     }
 
     public Page<ImageDAO> findAllProducts(Pageable pageable) {

@@ -23,13 +23,6 @@ public class RatingController {
         ratingService.rateImagesStandard(standardRating);
     }
 
-    @GetMapping("/standard")
-    public StandardRatingDTO standardRateImage() {
-        Map<String, StandardRatingType> types = new HashMap<>();
-        types.put("a key", StandardRatingType.zero);
-        return StandardRatingDTO.builder().user(UserDTO.builder().identifier("EINE ID").build()).ratings(types).build();
-    }
-
     @PostMapping("/veteran")
     public void veteranRateImage(@RequestBody VeteranRatingDTO veteranRatingDTO) {
         ratingService.rateImagesVeteran(veteranRatingDTO);
