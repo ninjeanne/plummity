@@ -42,7 +42,7 @@ public class ImageService {
             return false;
         }
 
-        UserDAO owner = userRepository.getOne(useridentifier);
+        UserDAO owner = userRepository.findByUuid(useridentifier);
 
         try {
             ImageDAO imageToSave = ImageDAO.builder().size(file.getSize()).owner(owner).uuid(UUID.randomUUID().toString()).created(new Date())

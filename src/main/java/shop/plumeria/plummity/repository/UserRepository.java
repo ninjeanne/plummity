@@ -7,4 +7,5 @@ import shop.plumeria.plummity.dao.UserDAO;
 @Repository
 public interface UserRepository extends JpaRepository<UserDAO, String> {
 
+    UserDAO findByUuid(String uuid);
 }

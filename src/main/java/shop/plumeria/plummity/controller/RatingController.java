@@ -2,13 +2,14 @@ package shop.plumeria.plummity.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import shop.plumeria.plummity.dto.StandardRatingDTO;
 import shop.plumeria.plummity.dto.UserDTO;
 import shop.plumeria.plummity.dto.VeteranRatingDTO;
-import shop.plumeria.plummity.service.ImageService;
 import shop.plumeria.plummity.service.RatingService;
-import shop.plumeria.plummity.service.UserDataService;
+import shop.plumeria.plummity.utils.StandardRatingType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/rating")
@@ -17,16 +18,20 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
-    @Autowired
-    private ImageService imageService;
-
     @PostMapping("/standard")
-    public void standardRateImage(StandardRatingDTO standardRating) {
+    public void standardRateImage(@RequestBody StandardRatingDTO standardRating) {
         ratingService.rateImagesStandard(standardRating);
     }
 
+    @GetMapping("/standard")
+    public StandardRatingDTO standardRateImage() {
+        Map<String, StandardRatingType> types = new HashMap<>();
+        types.put("a key", StandardRatingType.zero);
+        return StandardRatingDTO.builder().user(UserDTO.builder().identifier("EINE ID").build()).ratings(types).build();
+    }
+
     @PostMapping("/veteran")
-    public void veteranRateImage(VeteranRatingDTO veteranRatingDTO) {
+    public void veteranRateImage(@RequestBody VeteranRatingDTO veteranRatingDTO) {
         ratingService.rateImagesVeteran(veteranRatingDTO);
     }
 

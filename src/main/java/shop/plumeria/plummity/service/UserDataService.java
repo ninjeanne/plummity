@@ -44,7 +44,7 @@ public class UserDataService {
         if (!userRepository.existsById(useridentifier)) {
             createUser(useridentifier);
         }
-        return userRepository.getOne(useridentifier);
+        return userRepository.findByUuid(useridentifier);
     }
 
     private UserDTO convertToDTO(UserDAO dao) {
