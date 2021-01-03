@@ -32,7 +32,7 @@ public class UserController {
         return userDataService.getLatestUserDTO(useridentifier);
     }
 
-    @PostMapping("/{useridentifier}/standard/image")
+    @PostMapping("/{useridentifier}/image")
     public ResponseEntity<ErrorDTO> saveStandardImageForUser(@PathVariable String useridentifier, @RequestParam("file") MultipartFile file) {
         ErrorDTO error = imageService.saveNewImage(useridentifier, file);
         if (error == null) {
