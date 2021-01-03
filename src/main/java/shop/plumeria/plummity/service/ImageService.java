@@ -2,23 +2,21 @@ package shop.plumeria.plummity.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import shop.plumeria.plummity.dao.ImageDAO;
 import shop.plumeria.plummity.dao.StandardRatingDAO;
 import shop.plumeria.plummity.dao.UserDAO;
+import shop.plumeria.plummity.dao.VeteranRatingDAO;
+import shop.plumeria.plummity.dto.VeteranRatingEntry;
 import shop.plumeria.plummity.repository.ImageRepository;
 import shop.plumeria.plummity.repository.UserRepository;
+import shop.plumeria.plummity.repository.VeteranRatingRepository;
+import shop.plumeria.plummity.utils.VeteranRatingType;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -32,6 +30,9 @@ public class ImageService {
 
     @Autowired
     private UserDataService userDataService;
+
+    @Autowired
+    private VeteranRatingRepository veteranRatingRepository;
 
     public boolean saveNewImage(String useridentifier, MultipartFile file) {
         if (useridentifier == null) {
@@ -93,12 +94,20 @@ public class ImageService {
         return correctImagesIDs;
     }
 
-    public Slice<String> getVeteranImagesForUser(Pageable pageable, String useridentifier) {
-        return imageRepository.getAllImagesForVeteran(pageable);//TODO user fehlt
-    }
+    public Slice<VeteranRatingEntry> getVeteranImagesForUser(Pageable pageable, String useridentifier) {
+        Slice<ImageDAO> allVeteranImages = imageRepository.getAllImagesForVeteran(pageable);
+        List<VeteranRatingEntry> completeTypes = new ArrayList<>();
 
-    public Page<ImageDAO> findAllProducts(Pageable pageable) {
-        return imageRepository.findAll(pageable);
+        for (ImageDAO image : allVeteranImages) {
+            VeteranRatingType type = veteranRatingRepository.getTypeIfExists(useridentifier, image.getUuid());
+            if(type != null){
+                completeTypes.add(new VeteranRatingEntry(image.getUuid(), type));
+            } else {
+                completeTypes.add(new VeteranRatingEntry(image.getUuid(), VeteranRatingType.zero));
+            }
+        }
+
+        return new SliceImpl<>(completeTypes, pageable, allVeteranImages.hasNext());
     }
 
 }

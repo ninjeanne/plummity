@@ -4,17 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shop.plumeria.plummity.utils.StandardRatingType;
 import shop.plumeria.plummity.utils.VeteranRatingType;
-
-import java.util.List;
-import java.util.Map;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class VeteranRatingDTO {
-    private UserDTO user;
-    private List<VeteranRatingEntry> entries;
+public class VeteranRatingEntry {
+    private String imageId;
+    private VeteranRatingType type;
 }

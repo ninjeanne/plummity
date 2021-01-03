@@ -28,7 +28,6 @@ public class RatingController {
         ratingService.rateImagesVeteran(veteranRatingDTO);
     }
 
-    //TODO controller for ratings (preferable would be batches, check how flutter can send those)
     //TODO controller for latest images. See ImageService. Only the latest ones. Maybe a link would be enough as flutter can
     //TODO use network images to show thumbnails and not save images. Needs an active internet connection!
 
