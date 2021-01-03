@@ -52,7 +52,7 @@ public class UserDataService {
     }
 
     private long calculatePointsForUser(UserDAO user) {
-        List<ImageDAO> images = imageRepository.getImageDAOByOwner(user);
+        List<ImageDAO> images = imageRepository.getAllByOwner(user);
         long result = 0;
 
         for (ImageDAO image : images) {
