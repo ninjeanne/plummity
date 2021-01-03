@@ -13,6 +13,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 public class StandardRatingDTO {
-    private UserDTO user;
+    private String useridentifier;
     private Map<String, StandardRatingType> ratings;
 }

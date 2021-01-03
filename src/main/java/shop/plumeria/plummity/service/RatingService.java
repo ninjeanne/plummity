@@ -34,11 +34,11 @@ public class RatingService {
 
     public List<ErrorDTO> rateImagesStandard(StandardRatingDTO standardRating) {
         List<ErrorDTO> failedRating = new ArrayList<>();
-        if(standardRating.getUser() == null || standardRating.getUser().getIdentifier() == null) {
+        if(standardRating.getUseridentifier() == null) {
             failedRating.add(ErrorDTO.builder().message("User hasn't been sent").data(standardRating).build());
             return failedRating;
         }
-        UserDAO userFromDatabase = userDataService.getLatestUserDAO(standardRating.getUser().getIdentifier());
+        UserDAO userFromDatabase = userDataService.getLatestUserDAO(standardRating.getUseridentifier());
         for (Map.Entry<String, StandardRatingType> entry : standardRating.getRatings().entrySet()) {
             ImageDAO image = imageService.getImageForId(entry.getKey());
             if (image == null) {
@@ -56,11 +56,11 @@ public class RatingService {
 
     public List<ErrorDTO> rateImagesVeteran(VeteranRatingDTO veteranRating) {
         List<ErrorDTO> failedRating = new ArrayList<>();
-        if(veteranRating.getUser() == null || veteranRating.getUser().getIdentifier() == null) {
+        if(veteranRating.getUseridentifier() == null) {
             failedRating.add(ErrorDTO.builder().message("User hasn't been sent").data(veteranRating).build());
             return failedRating;
         }
-        UserDAO userFromDatabase = userDataService.getLatestUserDAO(veteranRating.getUser().getIdentifier());
+        UserDAO userFromDatabase = userDataService.getLatestUserDAO(veteranRating.getUseridentifier());
         for (VeteranRatingEntry entry : veteranRating.getEntries()) {
             ImageDAO image = imageService.getImageForId(entry.getImageId());
             if (image == null) {

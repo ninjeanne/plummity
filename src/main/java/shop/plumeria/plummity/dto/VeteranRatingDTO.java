@@ -15,6 +15,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 public class VeteranRatingDTO {
-    private UserDTO user;
+    private String useridentifier;
     private List<VeteranRatingEntry> entries;
 }
