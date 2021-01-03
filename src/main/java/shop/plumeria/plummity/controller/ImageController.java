@@ -16,7 +16,7 @@ public class ImageController {
     private ImageService imageService;
 
     @RequestMapping(value = "/{imageId:.+}", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getImage(@PathVariable("id") String imageId) {
+    public ResponseEntity<byte[]> getImage(@PathVariable("imageId") String imageId) {
         byte[] data = imageService.displayImage(imageId);
         if (data == null) {
             return ResponseEntity.notFound().build();

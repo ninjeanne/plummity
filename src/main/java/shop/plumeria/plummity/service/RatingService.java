@@ -43,7 +43,7 @@ public class RatingService {
             ImageDAO image = imageService.getImageForId(entry.getKey());
             if (image == null) {
                 log.warn("Image with id {} does not exist.", entry.getKey());
-                failedRating.add(ErrorDTO.builder().message("Image failed for data").data(entry).build());
+                failedRating.add(ErrorDTO.builder().message("Image doesn't exist with this id").data(entry).build());
                 continue;
             }
             StandardRatingDAO ratingForDB = StandardRatingDAO.builder().uuid(UUID.randomUUID().toString()).image(image).user(userFromDatabase)
@@ -65,7 +65,7 @@ public class RatingService {
             ImageDAO image = imageService.getImageForId(entry.getImageId());
             if (image == null) {
                 log.warn("Image with id {} does not exist.", entry.getImageId());
-                failedRating.add(ErrorDTO.builder().message("Image failed for data").data(entry).build());
+                failedRating.add(ErrorDTO.builder().message("Image doesn't exist with this id").data(entry).build());
                 continue;
             }
             VeteranRatingDAO ratingFromDb = veteranRatingRepository.getByUserAndImage(userFromDatabase, image);
