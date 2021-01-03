@@ -7,12 +7,15 @@ import shop.plumeria.plummity.dao.ImageDAO;
 import shop.plumeria.plummity.dao.StandardRatingDAO;
 import shop.plumeria.plummity.dao.UserDAO;
 import shop.plumeria.plummity.dao.VeteranRatingDAO;
+import shop.plumeria.plummity.dto.ErrorDTO;
 import shop.plumeria.plummity.dto.StandardRatingDTO;
 import shop.plumeria.plummity.dto.VeteranRatingDTO;
 import shop.plumeria.plummity.dto.VeteranRatingEntry;
 import shop.plumeria.plummity.repository.VeteranRatingRepository;
 import shop.plumeria.plummity.utils.StandardRatingType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,28 +32,41 @@ public class RatingService {
     @Autowired
     private VeteranRatingRepository veteranRatingRepository;
 
-    public void rateImagesStandard(StandardRatingDTO standardRating) {
+    public List<ErrorDTO> rateImagesStandard(StandardRatingDTO standardRating) {
+        List<ErrorDTO> failedRating = new ArrayList<>();
+        if(standardRating.getUser() == null || standardRating.getUser().getIdentifier() == null) {
+            failedRating.add(ErrorDTO.builder().message("User hasn't been sent").data(standardRating).build());
+            return failedRating;
+        }
         UserDAO userFromDatabase = userDataService.getLatestUserDAO(standardRating.getUser().getIdentifier());
         for (Map.Entry<String, StandardRatingType> entry : standardRating.getRatings().entrySet()) {
             ImageDAO image = imageService.getImageForId(entry.getKey());
             if (image == null) {
                 log.warn("Image with id {} does not exist.", entry.getKey());
-                return;
+                failedRating.add(ErrorDTO.builder().message("Image failed for data").data(entry).build());
+                continue;
             }
             StandardRatingDAO ratingForDB = StandardRatingDAO.builder().uuid(UUID.randomUUID().toString()).image(image).user(userFromDatabase)
                     .type(entry.getValue()).build();
             image.getStandardRatings().add(ratingForDB);
             imageService.update(image);
         }
+        return failedRating;
     }
 
-    public void rateImagesVeteran(VeteranRatingDTO veteranRating) {
+    public List<ErrorDTO> rateImagesVeteran(VeteranRatingDTO veteranRating) {
+        List<ErrorDTO> failedRating = new ArrayList<>();
+        if(veteranRating.getUser() == null || veteranRating.getUser().getIdentifier() == null) {
+            failedRating.add(ErrorDTO.builder().message("User hasn't been sent").data(veteranRating).build());
+            return failedRating;
+        }
         UserDAO userFromDatabase = userDataService.getLatestUserDAO(veteranRating.getUser().getIdentifier());
         for (VeteranRatingEntry entry : veteranRating.getEntries()) {
             ImageDAO image = imageService.getImageForId(entry.getImageId());
-            if(image == null) {
+            if (image == null) {
                 log.warn("Image with id {} does not exist.", entry.getImageId());
-                return;
+                failedRating.add(ErrorDTO.builder().message("Image failed for data").data(entry).build());
+                continue;
             }
             VeteranRatingDAO ratingFromDb = veteranRatingRepository.getByUserAndImage(userFromDatabase, image);
             if (ratingFromDb == null) {
@@ -62,6 +78,7 @@ public class RatingService {
             }
             imageService.update(image);
         }
+        return failedRating;
     }
 
 }

@@ -9,6 +9,7 @@ import shop.plumeria.plummity.dao.ImageDAO;
 import shop.plumeria.plummity.dao.StandardRatingDAO;
 import shop.plumeria.plummity.dao.UserDAO;
 import shop.plumeria.plummity.dao.VeteranRatingDAO;
+import shop.plumeria.plummity.dto.ErrorDTO;
 import shop.plumeria.plummity.dto.VeteranRatingEntry;
 import shop.plumeria.plummity.repository.ImageRepository;
 import shop.plumeria.plummity.repository.UserRepository;
@@ -26,25 +27,22 @@ public class ImageService {
     private ImageRepository imageRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private UserDataService userDataService;
 
     @Autowired
     private VeteranRatingRepository veteranRatingRepository;
 
-    public boolean saveNewImage(String useridentifier, MultipartFile file) {
+    public ErrorDTO saveNewImage(String useridentifier, MultipartFile file) {
         if (useridentifier == null) {
             log.warn("Couldn't save image for missing userid {}", useridentifier);
-            return false;
+            return ErrorDTO.builder().message("Couldn't save image for missing userid").data(useridentifier).build();
         }
         if (file == null) {
             log.warn("Couldn't save image for userid {} with empty file data", useridentifier);
-            return false;
+            return ErrorDTO.builder().message("Couldn't save image for missing file data").data(file).build();
         }
 
-        UserDAO owner = userRepository.findByUuid(useridentifier);
+        UserDAO owner = userDataService.getLatestUserDAO(useridentifier);
 
         try {
             ImageDAO imageToSave = ImageDAO.builder().size(file.getSize()).owner(owner).uuid(UUID.randomUUID().toString()).created(new Date())
@@ -52,9 +50,9 @@ public class ImageService {
             imageRepository.save(imageToSave);
         } catch (IOException e) {
             log.warn("Couldn't save image for userid {}", useridentifier);
-            return false;
+            return ErrorDTO.builder().message("Couldn't save image for userid").data(useridentifier).build();
         }
-        return true;
+        return null;
     }
 
     public void update(ImageDAO image) {
@@ -69,7 +67,16 @@ public class ImageService {
         return imageRepository.getImageDAOByUuid(imageId);
     }
 
-    public Date get10DaysAgo(){
+    public byte[] displayImage(String imageId) {
+        ImageDAO imageDAO = getImageForId(imageId);
+        if(imageDAO == null) {
+            log.warn("Image with id {} couldn't be found.", imageId);
+            return null;
+        }
+        return imageDAO.getData();
+    }
+
+    public static Date get10DaysAgo(){
         long DAY_IN_MS = 1000 * 60 * 60 * 24;
         return new Date(System.currentTimeMillis() - (7 * DAY_IN_MS));
     }
@@ -82,7 +89,7 @@ public class ImageService {
         for (ImageDAO image : images) {
             boolean isImageRated = false;
             for (StandardRatingDAO standardRating : image.getStandardRatings()) {
-                if (standardRating.getUser().getUuid().equals(userFromDatabase.getUuid())) {
+                if (standardRating.getUser().getUseridentifier().equals(userFromDatabase.getUseridentifier())) {
                     isImageRated = true;
                     break;
                 }

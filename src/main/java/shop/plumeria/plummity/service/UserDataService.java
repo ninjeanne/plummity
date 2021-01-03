@@ -31,7 +31,7 @@ public class UserDataService {
         long points = calculatePointsForUser(user);
         user.setPoints(points);
         userRepository.save(user);
-        log.warn("Updated user {} with points {}", user.getUuid(), points);
+        log.warn("Updated user {} with points {}", user.getUseridentifier(), points);
         promoteUser(user);
     }
 
@@ -44,11 +44,11 @@ public class UserDataService {
         if (!userRepository.existsById(useridentifier)) {
             createUser(useridentifier);
         }
-        return userRepository.findByUuid(useridentifier);
+        return userRepository.findByUseridentifier(useridentifier);
     }
 
     private UserDTO convertToDTO(UserDAO dao) {
-        return UserDTO.builder().identifier(dao.getUuid()).points(dao.getPoints()).isVeteran(dao.isVeteran()).build();
+        return UserDTO.builder().identifier(dao.getUseridentifier()).points(dao.getPoints()).isVeteran(dao.isVeteran()).build();
     }
 
     private long calculatePointsForUser(UserDAO user) {
@@ -74,7 +74,7 @@ public class UserDataService {
             log.warn("Couldn't create user with uuid {}", useridentifier);
             return false;
         }
-        UserDAO userDAO = UserDAO.builder().uuid(useridentifier).isVeteran(false).points(0).build();
+        UserDAO userDAO = UserDAO.builder().useridentifier(useridentifier).isVeteran(false).points(0).build();
         userRepository.save(userDAO);
         log.warn("User with userid {} has been created", useridentifier);
         return true;
@@ -90,7 +90,7 @@ public class UserDataService {
             if (becomesVeteran) {
                 user.setVeteran(true);
                 userRepository.save(user);
-                log.warn("User with id {} is now veteran", user.getUuid());
+                log.warn("User with id {} is now veteran", user.getUseridentifier());
             }
         }
     }

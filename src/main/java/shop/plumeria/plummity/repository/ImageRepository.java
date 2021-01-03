@@ -19,7 +19,7 @@ public interface ImageRepository extends JpaRepository<ImageDAO, String> {
     List<ImageDAO> getAllByOwner(UserDAO owner);
     ImageDAO getImageDAOByUuid(String uuid);
 
-    @Query("select images from ImageDAO images where images.owner.uuid not like :useridentifier and images.created  >= :tenDaysAgo")
+    @Query("select images from ImageDAO images where images.owner.useridentifier not like :useridentifier and images.created  >= :tenDaysAgo")
     List<ImageDAO> getLatest(String useridentifier, Date tenDaysAgo, Sort sort);
 
     @Query("select images from ImageDAO images")

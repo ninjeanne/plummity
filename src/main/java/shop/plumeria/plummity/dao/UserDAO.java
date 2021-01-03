@@ -13,7 +13,7 @@ import javax.persistence.Id;
 @Entity
 public class UserDAO {
     @Id
-    private String uuid;
+    private String useridentifier;
     private long points;
     private boolean isVeteran;
 }

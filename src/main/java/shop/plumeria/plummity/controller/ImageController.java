@@ -15,9 +15,12 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping(value = "/{id:.+}", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getImage(@PathVariable("id") String id) {
-        byte[] image = imageService.getImageForId(id).getData();
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+    @RequestMapping(value = "/{imageId:.+}", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") String imageId) {
+        byte[] data = imageService.displayImage(imageId);
+        if (data == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(data);
     }
 }

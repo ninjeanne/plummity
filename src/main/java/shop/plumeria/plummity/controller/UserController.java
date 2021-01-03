@@ -6,14 +6,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import shop.plumeria.plummity.dto.ErrorDTO;
 import shop.plumeria.plummity.dto.UserDTO;
 import shop.plumeria.plummity.dto.VeteranRatingEntry;
 import shop.plumeria.plummity.service.ImageService;
 import shop.plumeria.plummity.service.UserDataService;
-import shop.plumeria.plummity.utils.VeteranRatingType;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -32,8 +31,12 @@ public class UserController {
     }
 
     @PostMapping("/{useridentifier}/standard/image")
-    public boolean saveStandardImageForUser(@PathVariable String useridentifier, @RequestParam("file") MultipartFile file) {
-        return imageService.saveNewImage(useridentifier, file);
+    public ResponseEntity<ErrorDTO> saveStandardImageForUser(@PathVariable String useridentifier, @RequestParam("file") MultipartFile file) {
+        ErrorDTO error = imageService.saveNewImage(useridentifier, file);
+        if (error == null) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().body(error);
     }
 
     @GetMapping(value = "/{useridentifier}/standard/images")
