@@ -3,8 +3,11 @@ package shop.plumeria.plummity.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import shop.plumeria.plummity.dto.StandardRatingDTO;
 import shop.plumeria.plummity.dto.UserDTO;
+import shop.plumeria.plummity.dto.VeteranRatingDTO;
 import shop.plumeria.plummity.service.ImageService;
+import shop.plumeria.plummity.service.RatingService;
 import shop.plumeria.plummity.service.UserDataService;
 
 @RestController
@@ -12,19 +15,19 @@ import shop.plumeria.plummity.service.UserDataService;
 public class RatingController {
 
     @Autowired
-    private UserDataService userDataService;
+    private RatingService ratingService;
 
     @Autowired
     private ImageService imageService;
 
-    @GetMapping("/{useridentifier}")
-    public UserDTO getLatestUserData(@PathVariable String useridentifier) {
-        return userDataService.getLatestUserData(useridentifier);
+    @PostMapping("/standard")
+    public void standardRateImage(StandardRatingDTO standardRating) {
+        ratingService.rateImagesStandard(standardRating);
     }
 
-    @PostMapping("/{useridentifier}/image")
-    public boolean saveImageDataForUser(@PathVariable String useridentifier, @RequestParam("file") MultipartFile file) {
-        return imageService.saveNewImage(useridentifier, file);
+    @PostMapping("/veteran")
+    public void veteranRateImage(VeteranRatingDTO veteranRatingDTO) {
+        ratingService.rateImagesVeteran(veteranRatingDTO);
     }
 
     //TODO controller for ratings (preferable would be batches, check how flutter can send those)

@@ -3,6 +3,7 @@ package shop.plumeria.plummity.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import shop.plumeria.plummity.dao.UserDAO;
 import shop.plumeria.plummity.dto.ImageDTO;
 import shop.plumeria.plummity.dto.UserDTO;
 import shop.plumeria.plummity.service.ImageService;
@@ -22,7 +23,8 @@ public class UserController {
 
     @GetMapping("/{useridentifier}")
     public UserDTO getLatestUserData(@PathVariable String useridentifier) {
-        return userDataService.getLatestUserData(useridentifier);
+       userDataService.syncUser(useridentifier);
+        return userDataService.getLatestUserDTO(useridentifier);
     }
 
     @PostMapping("/{useridentifier}/image")

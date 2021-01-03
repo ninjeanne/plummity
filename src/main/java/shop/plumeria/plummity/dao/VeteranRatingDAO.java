@@ -26,5 +26,5 @@ public class VeteranRatingDAO {
     @OneToOne(cascade = { CascadeType.ALL })
     private UserDAO user;
 
-    private VeteranRatingType veteranRatingType;
+    private VeteranRatingType type;
 }

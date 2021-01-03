@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 public class UserDTO {
     private String identifier;
-    private int points;
+    private long points;
     private boolean isVeteran;
 }
