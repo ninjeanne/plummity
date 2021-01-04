@@ -24,20 +24,19 @@ public class UserDataService {
     private ImageRepository imageRepository;
 
     public UserDTO getLatestUserDTO(String useridentifier) {
-        return convertToDTO(getLatestUserDAO(useridentifier));
+        UserDAO userFromDB = getLatestUserDAO(useridentifier);
+        long plummityPoints = calculatePlummityPointsForUser(userFromDB);
+        UserDTO userToSend = convertToDTO(userFromDB);
+        userToSend.setPoints(userFromDB.getFarmpoints() + plummityPoints);
+        return userToSend;
     }
 
-    public void updatePointsForUser(UserDAO user){
-        long points = calculatePointsForUser(user);
-        user.setPoints(points);
-        userRepository.save(user);
-        log.warn("Updated user {} with points {}", user.getUseridentifier(), points);
-        promoteUser(user);
-    }
-
-    public void syncUser(String useridentifier){
-        UserDAO userFromDatabase = getLatestUserDAO(useridentifier);
-        updatePointsForUser(userFromDatabase);
+    public void updateFarmpointsForUser(String useridentifier, long newFarmPoints){
+        UserDAO userFromDB = getLatestUserDAO(useridentifier);
+        userFromDB.setFarmpoints(userFromDB.getFarmpoints() + newFarmPoints);
+        userRepository.save(userFromDB);
+        log.warn("Updated user {} with new farmpoints {}", userFromDB.getUseridentifier(), newFarmPoints);
+        promoteUser(userFromDB);
     }
 
     UserDAO getLatestUserDAO(String useridentifier) {
@@ -48,10 +47,10 @@ public class UserDataService {
     }
 
     private UserDTO convertToDTO(UserDAO dao) {
-        return UserDTO.builder().identifier(dao.getUseridentifier()).points(dao.getPoints()).isVeteran(dao.isVeteran()).build();
+        return UserDTO.builder().identifier(dao.getUseridentifier()).points(0).isVeteran(dao.isVeteran()).build();
     }
 
-    private long calculatePointsForUser(UserDAO user) {
+    private long calculatePlummityPointsForUser(UserDAO user) {
         List<ImageDAO> images = imageRepository.getAllByOwner(user);
         long result = 0;
 
@@ -74,7 +73,7 @@ public class UserDataService {
             log.warn("Couldn't create user with uuid {}", useridentifier);
             return false;
         }
-        UserDAO userDAO = UserDAO.builder().useridentifier(useridentifier).isVeteran(false).points(0).build();
+        UserDAO userDAO = UserDAO.builder().useridentifier(useridentifier).isVeteran(false).farmpoints(0).build();
         userRepository.save(userDAO);
         log.warn("User with userid {} has been created", useridentifier);
         return true;
@@ -86,7 +85,7 @@ public class UserDataService {
 
     private void promoteUser(UserDAO user) {
         if (!user.isVeteran()) {
-            boolean becomesVeteran = checkVeteranPromotion(user.getPoints());
+            boolean becomesVeteran = checkVeteranPromotion(user.getFarmpoints());
             if (becomesVeteran) {
                 user.setVeteran(true);
                 userRepository.save(user);

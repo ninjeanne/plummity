@@ -26,7 +26,12 @@ public class UserController {
 
     @GetMapping("/{useridentifier}")
     public UserDTO getLatestUserData(@PathVariable String useridentifier) {
-        userDataService.syncUser(useridentifier);
+        return userDataService.getLatestUserDTO(useridentifier);
+    }
+
+    @PostMapping("/{useridentifier}/farmpoints")
+    public UserDTO addFarmPoints(@PathVariable String useridentifier, @RequestParam long newFarmPoints) {
+        userDataService.updateFarmpointsForUser(useridentifier, newFarmPoints);
         return userDataService.getLatestUserDTO(useridentifier);
     }
 

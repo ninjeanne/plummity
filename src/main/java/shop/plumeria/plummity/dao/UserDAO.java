@@ -14,6 +14,6 @@ import javax.persistence.Id;
 public class UserDAO {
     @Id
     private String useridentifier;
-    private long points;
+    private long farmpoints;
     private boolean isVeteran;
 }
