@@ -2,7 +2,10 @@ package shop.plumeria.plummity.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import shop.plumeria.plummity.dao.ImageDAO;
@@ -34,9 +37,17 @@ public class ImageService {
     private VeteranRatingRepository veteranRatingRepository;
 
     public ErrorDTO saveNewImage(String useridentifier, MultipartFile file) {
+        return saveNewImageWithId(useridentifier, UUID.randomUUID().toString(), file);
+    }
+
+    public ErrorDTO saveNewImageWithId(String useridentifier, String imageId, MultipartFile file) {
         if (useridentifier == null) {
             log.warn("Couldn't save image for missing userid {}", useridentifier);
             return ErrorDTO.builder().message("Couldn't save image for missing userid").data(useridentifier).build();
+        }
+        if (imageId == null) {
+            log.warn("Couldn't save image for missing imageId {}", imageId);
+            return ErrorDTO.builder().message("Couldn't save image for missing imageId").data(imageId).build();
         }
         if (file == null) {
             log.warn("Couldn't save image for userid {} with empty file data", useridentifier);
@@ -46,8 +57,8 @@ public class ImageService {
         UserDAO owner = userDataService.getLatestUserDAO(useridentifier);
 
         try {
-            ImageDAO imageToSave = ImageDAO.builder().size(file.getSize()).owner(owner).uuid(UUID.randomUUID().toString()).created(new Date())
-                    .data(file.getBytes()).mediaType(file.getContentType()).veteranRatings(new ArrayList<>()).standardRatings(new ArrayList<>()).build();
+            ImageDAO imageToSave = ImageDAO.builder().size(file.getSize()).owner(owner).uuid(imageId).created(new Date()).data(file.getBytes())
+                    .mediaType(file.getContentType()).veteranRatings(new ArrayList<>()).standardRatings(new ArrayList<>()).build();
             imageRepository.save(imageToSave);
         } catch (IOException e) {
             log.warn("Couldn't save image for userid {}", useridentifier);
@@ -70,14 +81,14 @@ public class ImageService {
 
     public byte[] displayImage(String imageId) {
         ImageDAO imageDAO = getImageForId(imageId);
-        if(imageDAO == null) {
+        if (imageDAO == null) {
             log.warn("Image with id {} couldn't be found.", imageId);
             return null;
         }
         return imageDAO.getData();
     }
 
-    public static Date get10DaysAgo(){
+    public static Date get10DaysAgo() {
         long DAY_IN_MS = 1000 * 60 * 60 * 24;
         return new Date(System.currentTimeMillis() - (7 * DAY_IN_MS));
     }
@@ -85,7 +96,7 @@ public class ImageService {
     public Slice<String> getLatestStandardImagesForUser(Pageable pageable, String useridentifier) {
         pageable.getSortOr(Sort.by(Sort.Direction.ASC, "created"));
         UserDAO userFromDatabase = userDataService.getLatestUserDAO(useridentifier);
-        Slice<ImageDAO> images = imageRepository.getLatest(useridentifier, get10DaysAgo(), pageable);
+        Slice<ImageDAO> images = imageRepository.getLatest(get10DaysAgo(), pageable);
         List<String> correctImagesIDs = new ArrayList<>();
 
         for (ImageDAO image : images) {
@@ -109,7 +120,7 @@ public class ImageService {
 
         for (ImageDAO image : allVeteranImages) {
             VeteranRatingType type = veteranRatingRepository.getTypeIfExists(useridentifier, image.getUuid());
-            if(type != null){
+            if (type != null) {
                 completeTypes.add(new VeteranRatingEntry(image.getUuid(), type));
             } else {
                 completeTypes.add(new VeteranRatingEntry(image.getUuid(), VeteranRatingType.zero));

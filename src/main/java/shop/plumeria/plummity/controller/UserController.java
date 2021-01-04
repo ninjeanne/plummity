@@ -39,6 +39,15 @@ public class UserController {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @PostMapping("/{useridentifier}/image/{imageId}")
+    public ResponseEntity<ErrorDTO> saveStandardImageForUser(@PathVariable String useridentifier, @PathVariable String imageId, @RequestParam("file") MultipartFile file) {
+        ErrorDTO error = imageService.saveNewImageWithId(useridentifier, imageId, file);
+        if (error == null) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @GetMapping(value = "/{useridentifier}/standard/images")
     public ResponseEntity<Slice<String>> getNewestStandardImageIds(@PageableDefault(sort = { "created" }, direction = Sort.Direction.DESC) Pageable pageable,
             @PathVariable("useridentifier") String useridentifier) {
