@@ -19,7 +19,7 @@ public class AcademyController {
     @Autowired
     private AcademyService academyService;
 
-    @RequestMapping(value = "/dailyquestions", method = RequestMethod.GET)
+    @RequestMapping(value = "/dailyquestions", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ResponseEntity<List<AcademyQuestionDTO>> getDailyQuestion() {
         List<AcademyQuestionDTO> data = academyService.getRandomDailyQuestions();
         return ResponseEntity.ok().body(data);
