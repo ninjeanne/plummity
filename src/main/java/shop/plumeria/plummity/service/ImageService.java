@@ -136,6 +136,7 @@ public class ImageService {
     }
 
     public Slice<VeteranRatingEntry> getVeteranImagesForUser(Pageable pageable, String useridentifier) {
+        pageable.getSortOr(Sort.by(Sort.Direction.ASC, "created"));
         Slice<ImageDAO> allVeteranImages = imageRepository.getAllImagesForVeteran(pageable);
         List<VeteranRatingEntry> completeTypes = new ArrayList<>();
 
