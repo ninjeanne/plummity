@@ -2,8 +2,8 @@ package shop.plumeria.plummity.utils;
 
 public enum VeteranRatingType {
     unselect(0),
-    like(10),
-    dislike(-10);
+    like(50),
+    dislike(-50);
     public final long value;
 
     private VeteranRatingType(int value){
