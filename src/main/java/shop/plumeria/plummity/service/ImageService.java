@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.plumeria.plummity.dao.ImageDAO;
 import shop.plumeria.plummity.dao.StandardRatingDAO;
 import shop.plumeria.plummity.dao.UserDAO;
+import shop.plumeria.plummity.dao.VeteranRatingDAO;
 import shop.plumeria.plummity.dto.ErrorDTO;
 import shop.plumeria.plummity.dto.VeteranRatingEntry;
 import shop.plumeria.plummity.repository.ImageRepository;
@@ -86,6 +87,26 @@ public class ImageService {
             return null;
         }
         return imageDAO.getData();
+    }
+
+    public byte[] bestImage() {
+        List<ImageDAO> images = imageRepository.getAllImagesForToday();
+        int topRating = 0;
+        ImageDAO topImage = new ImageDAO();
+        for (ImageDAO image : images) {
+            int rating = 0;
+            for (StandardRatingDAO standardRating : image.getStandardRatings()) {
+                rating += standardRating.getType().value;
+            }
+            for (VeteranRatingDAO veteranRating : image.getVeteranRatings()) {
+                rating += veteranRating.getType().value;
+            }
+            if (rating >= topRating) {
+                topImage = image;
+                topRating = rating;
+            }
+        }
+        return topImage.getData();
     }
 
     public static Date get10DaysAgo() {

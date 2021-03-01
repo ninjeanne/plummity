@@ -22,6 +22,9 @@ public interface ImageRepository extends JpaRepository<ImageDAO, String> {
     @Query("select images from ImageDAO images where images.created  >= :tenDaysAgo")
     Slice<ImageDAO> getLatest(Date tenDaysAgo, Pageable pageable);
 
+    @Query("select images from ImageDAO images where images.created > current_date")
+    List<ImageDAO> getAllImagesForToday();
+
     @Query("select images from ImageDAO images")
     Slice<ImageDAO> getAllImagesForVeteran(Pageable pageable);
 }

@@ -23,4 +23,13 @@ public class ImageController {
         }
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(data);
     }
+
+    @RequestMapping(value = "/best", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getBestImageForToday() {
+        byte[] data = imageService.bestImage();
+        if (data == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(data);
+    }
 }
