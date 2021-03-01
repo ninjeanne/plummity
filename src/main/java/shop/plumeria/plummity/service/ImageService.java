@@ -144,7 +144,7 @@ public class ImageService {
             if (type != null) {
                 completeTypes.add(new VeteranRatingEntry(image.getUuid(), type));
             } else {
-                completeTypes.add(new VeteranRatingEntry(image.getUuid(), VeteranRatingType.zero));
+                completeTypes.add(new VeteranRatingEntry(image.getUuid(), VeteranRatingType.unselect));
             }
         }
 

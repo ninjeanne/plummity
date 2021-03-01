@@ -38,10 +38,4 @@ public class RatingController {
         }
         return ResponseEntity.ok().build();
     }
-
-    //TODO controller for latest images. See ImageService. Only the latest ones. Maybe a link would be enough as flutter can
-    //TODO use network images to show thumbnails and not save images. Needs an active internet connection!
-
-    //TODO set up gitlab ci and the server
-
 }
