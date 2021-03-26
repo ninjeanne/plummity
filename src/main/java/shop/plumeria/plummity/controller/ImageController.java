@@ -17,10 +17,12 @@ public class ImageController {
 
     @RequestMapping(value = "/{imageId:.+}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> getImage(@PathVariable("imageId") String imageId) {
-        byte[] data = imageService.displayImage(imageId);
-        if (data == null) {
+        byte[] originalData = imageService.displayImage(imageId);
+        if (originalData == null) {
             return ResponseEntity.notFound().build();
         }
+
+        byte[] data = imageService.convertToThumbnail(originalData);
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(data);
     }
 

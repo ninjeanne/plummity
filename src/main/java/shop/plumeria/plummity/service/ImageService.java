@@ -1,6 +1,7 @@
 package shop.plumeria.plummity.service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -18,7 +19,12 @@ import shop.plumeria.plummity.repository.ImageRepository;
 import shop.plumeria.plummity.repository.VeteranRatingRepository;
 import shop.plumeria.plummity.utils.VeteranRatingType;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +80,20 @@ public class ImageService {
             return;
         }
         imageRepository.save(image);
+    }
+
+    public byte[] convertToThumbnail(byte[] data) {
+        InputStream is = new ByteArrayInputStream(data);
+        BufferedImage originalImage = null;
+        try {
+            originalImage = ImageIO.read(is);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            Thumbnails.of(originalImage).size(originalImage.getWidth(), originalImage.getHeight()).outputFormat("JPEG").outputQuality(0.75).toOutputStream(outputStream);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
 
     public ImageDAO getImageForId(String imageId) {
