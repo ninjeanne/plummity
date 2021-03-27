@@ -88,7 +88,7 @@ public class ImageService {
         try {
             originalImage = ImageIO.read(is);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            Thumbnails.of(originalImage).size(originalImage.getWidth(), originalImage.getHeight()).outputFormat("JPEG").outputQuality(0.75).toOutputStream(outputStream);
+            Thumbnails.of(originalImage).size(originalImage.getWidth(), originalImage.getHeight()).outputFormat("JPEG").outputQuality(0.5).toOutputStream(outputStream);
             return outputStream.toByteArray();
         } catch (IOException e) {
             log.error(e.getMessage());
